@@ -7,13 +7,17 @@
 </head>
 <body>
     <h1>GW2 API übung</h1>
-    <button onclick="test()">test</button>
+    <button onclick="getid()">test</button>
     <div id="ausgabe"></div>
 
+    <input type ="text" id="itemId" placeholder="Item ID"/>
+
+
     <script>
-        async function test() {
-            const antwort = await fetch('https://api.guildwars2.com/v2/items?ids=30687')
-            
+        async function getid() {
+            const wert = document.getElementById("itemId").value;
+            const antwort = await fetch(`https://api.guildwars2.com/v2/items?ids=${wert}`)
+
             console.log("Status: ", antwort.status);
             console.log("Okay? ", antwort.ok);
 
@@ -23,7 +27,7 @@
             }
 
             const daten = await antwort.json()
-            
+
             const box = document.getElementById("ausgabe");
 
             box.innerHTML = `
