@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GW2  Lernprojekt</title>
+</head>
+<body>
+    <h1>GW2 API übung</h1>
+    <button onclick="test()">test</button>
+
+    <script>
+        async function test() {
+            const antwort = await fetch('https://api.guildwars2.com/v2/items?ids=30687')
+            
+            console.log("Status: ", antwort.status);
+            console.log("Okay? ", antwort.ok);
+
+            const daten = await antwort.json()
+            console.log("Daten: ", daten)
+        }
+    </script>
+</body>
+</html>
