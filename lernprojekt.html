@@ -56,10 +56,11 @@
             const daten = await antwort.json()
 
             const box = document.getElementById("ausgabe");
+            const stunden = Math.floor(daten.age / 3600);
 
             box.innerHTML = `
                 <p>Accountname: ${daten.name}</p>
-                <p>Account age: ${daten.age}</p>
+                <p>Account age: ${stunden}h</p>
             `
         }
     </script>
