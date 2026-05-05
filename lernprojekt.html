@@ -7,10 +7,14 @@
 </head>
 <body>
     <h1>GW2 API übung</h1>
-    <button onclick="getid()">test</button>
+    <button onclick="getid()">ID</button>
+    <button onclick="getaccount()">Account</button>
+
     <div id="ausgabe"></div>
 
     <input type ="text" id="itemId" placeholder="Item ID"/>
+    <br>
+    <input type ="password" id="apiKey" placeholder="Api Key"/>
 
 
     <script>
@@ -34,6 +38,28 @@
                 <p>Name: ${daten[0].name}</p>
                 <p>Rarity: ${daten[0].rarity}</p>
                 <p>Type: ${daten[0].type}</p>
+            `
+        }
+        
+        async function getaccount() {
+            const wert = document.getElementById("apiKey").value;
+            const antwort = await fetch(`https://api.guildwars2.com/v2/account?access_token=${wert}`)
+
+            console.log("Status: ", antwort.status);
+            console.log("Okay? ", antwort.ok);
+
+            if (!antwort.ok) {
+                console.log("Fehler! Status: ", antwort.status);
+                return;
+            }
+
+            const daten = await antwort.json()
+
+            const box = document.getElementById("ausgabe");
+
+            box.innerHTML = `
+                <p>Accountname: ${daten.name}</p>
+                <p>Account age: ${daten.age}</p>
             `
         }
     </script>
