@@ -44,28 +44,43 @@
         async function getaccount() {
             const wert = document.getElementById("apiKey").value;
             const antwort = await fetch(`https://api.guildwars2.com/v2/account?access_token=${wert}`)
-
-            const wert2 = await fetch(`https://api.guildwars2.com/v2/account/legendaryarmory?access_token=${wert}`)
-            const armory = await wert2.json();
-            const ids = armory.map(i => i.id).join(',');
-
-            console.log(ids);
-
-            const wert3 = await fetch(`https://api.guildwars2.com/v2/items?ids=${ids}`)
-            const items = await wert3.json();
-            console.log(items);
-
-            const listeHTML = items.map(item => `<p>${item.name}</p>`).join('');
-
-            console.log("Status: ", antwort.status);
-            console.log("Okay? ", antwort.ok);
-
+            
+            
             if (!antwort.ok) {
                 console.log("Fehler! Status: ", antwort.status);
                 return;
             }
 
             const daten = await antwort.json();
+
+            const wert2 = await fetch(`https://api.guildwars2.com/v2/account/legendaryarmory?access_token=${wert}`)
+
+            if (!wert2.ok) {
+                console.log("Fehler! Status: ", antwort.status);
+                return;
+            }
+
+            const armory = await wert2.json();
+            const ids = armory.map(i => i.id).join(',');
+
+            const wert3 = await fetch(`https://api.guildwars2.com/v2/items?ids=${ids}`)
+
+            if (!wert3.ok) {
+                console.log("Fehler! Status: ", antwort.status);
+                return;
+            }
+
+            const items = await wert3.json();
+
+            console.log(items);
+
+            console.log("Status: ", antwort.status);
+            console.log("Okay? ", antwort.ok);
+
+            const listeHTML = items.map(item => `
+            <p>${item.name}</p>
+            <img src="${item.icon}"> 
+            `).join('');
 
             const box = document.getElementById("ausgabe");
             const stunden = Math.floor(daten.age / 3600);
