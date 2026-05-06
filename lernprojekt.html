@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GW2  Lernprojekt</title>
 </head>
-<body>
+<body> 
     <h1>GW2 API übung</h1>
     <button onclick="getid()">ID</button>
     <button onclick="getaccount()">Account</button>
@@ -45,6 +45,18 @@
             const wert = document.getElementById("apiKey").value;
             const antwort = await fetch(`https://api.guildwars2.com/v2/account?access_token=${wert}`)
 
+            const wert2 = await fetch(`https://api.guildwars2.com/v2/account/legendaryarmory?access_token=${wert}`)
+            const armory = await wert2.json();
+            const ids = armory.map(i => i.id).join(',');
+
+            console.log(ids);
+
+            const wert3 = await fetch(`https://api.guildwars2.com/v2/items?ids=${ids}`)
+            const items = await wert3.json();
+            console.log(items);
+
+            const listeHTML = items.map(item => `<p>${item.name}</p>`).join('');
+
             console.log("Status: ", antwort.status);
             console.log("Okay? ", antwort.ok);
 
@@ -53,7 +65,7 @@
                 return;
             }
 
-            const daten = await antwort.json()
+            const daten = await antwort.json();
 
             const box = document.getElementById("ausgabe");
             const stunden = Math.floor(daten.age / 3600);
@@ -61,8 +73,12 @@
             box.innerHTML = `
                 <p>Accountname: ${daten.name}</p>
                 <p>Account Spielzeit: ${stunden}h</p>
+                <hr></hr>
+                <h3>Legendary Armory</h3>
+                ${listeHTML}
             `
         }
+
     </script>
 </body>
 </html>
