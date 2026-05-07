@@ -53,6 +53,9 @@
         async function getaccount() {
             try  {
             const wert = document.getElementById("apiKey").value;
+            const box = document.getElementById("ausgabe");
+            box.innerHTML = '<p>Laden ...</p>';
+            
             const antwort = await fetch(`https://api.guildwars2.com/v2/account?access_token=${wert}`)
 
             const daten = await antwort.json();
@@ -77,12 +80,13 @@
             <img src="${item.icon}"> 
             `).join('');
 
-            const box = document.getElementById("ausgabe");
+            
             const stunden = Math.floor(daten.age / 3600);
 
            
 
             box.innerHTML = `
+                
                 <p>Accountname: ${daten.name}</p>
                 <p>Account Spielzeit: ${stunden}h</p>
                 <hr></hr>
@@ -91,6 +95,7 @@
             ` 
             } catch(fehler) {
                 console.log("Etwas ist Fehlgeschlagen:", fehler);
+                box.innerHTML = '<p>Fehler beim Laden</p>';
             }
         }
 
