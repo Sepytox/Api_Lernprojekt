@@ -18,6 +18,15 @@
 
 
     <script>
+
+        window.addEventListener('load', () => {
+            const gespeicherterKey = localStorage.getItem('gw2key');
+            if (gespeicherterKey) {
+                document.getElementById('apiKey').value = gespeicherterKey;
+                getaccount();
+            }
+        });
+
         async function getid() {
             const wert = document.getElementById("itemId").value;
             const antwort = await fetch(`https://api.guildwars2.com/v2/items?ids=${wert}`)
@@ -42,38 +51,24 @@
         }
         
         async function getaccount() {
+            try  {
             const wert = document.getElementById("apiKey").value;
             const antwort = await fetch(`https://api.guildwars2.com/v2/account?access_token=${wert}`)
-            
-            
-            if (!antwort.ok) {
-                console.log("Fehler! Status: ", antwort.status);
-                return;
-            }
 
             const daten = await antwort.json();
 
             const wert2 = await fetch(`https://api.guildwars2.com/v2/account/legendaryarmory?access_token=${wert}`)
-
-            if (!wert2.ok) {
-                console.log("Fehler! Status: ", antwort.status);
-                return;
-            }
 
             const armory = await wert2.json();
             const ids = armory.map(i => i.id).join(',');
 
             const wert3 = await fetch(`https://api.guildwars2.com/v2/items?ids=${ids}`)
 
-            if (!wert3.ok) {
-                console.log("Fehler! Status: ", antwort.status);
-                return;
-            }
-
             const items = await wert3.json();
 
-            console.log(items);
+            localStorage.setItem('gw2key', wert);
 
+            console.log(items);
             console.log("Status: ", antwort.status);
             console.log("Okay? ", antwort.ok);
 
@@ -85,13 +80,18 @@
             const box = document.getElementById("ausgabe");
             const stunden = Math.floor(daten.age / 3600);
 
+           
+
             box.innerHTML = `
                 <p>Accountname: ${daten.name}</p>
                 <p>Account Spielzeit: ${stunden}h</p>
                 <hr></hr>
                 <h3>Legendary Armory</h3>
                 ${listeHTML}
-            `
+            ` 
+            } catch(fehler) {
+                console.log("Etwas ist Fehlgeschlagen:", fehler);
+            }
         }
 
     </script>
