@@ -3,22 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GW2  Lernprojekt</title>
+    <title>GW2 Lernprojekt</title>
 </head>
 <body> 
-    <h1>GW2 API übung</h1>
+    <h1>GW2 API Übung</h1>
+
+    <!-- Schaltflächen -->
     <button onclick="getid()">ID</button>
     <button onclick="getaccount()">Account</button>
 
+    <!-- Ausgabebereich -->
     <div id="ausgabe"></div>
 
-    <input type ="text" id="itemId" placeholder="Item ID"/>
+    <!-- Eingabefelder -->
+    <input type="text" id="itemId" placeholder="Item ID"/>
     <br>
-    <input type ="password" id="apiKey" placeholder="Api Key"/>
-
+    <input type="password" id="apiKey" placeholder="Api Key"/>
 
     <script>
 
+        // Gespeicherten Key laden und Account abrufen
         window.addEventListener('load', () => {
             const gespeicherterKey = localStorage.getItem('gw2key');
             if (gespeicherterKey) {
@@ -28,9 +32,13 @@
         });
 
         async function getid() {
+            // Item-ID auslesen
             const wert = document.getElementById("itemId").value;
-            const antwort = await fetch(`https://api.guildwars2.com/v2/items?ids=${wert}`)
 
+            // API-Anfrage für Item
+            const antwort = await fetch(`https://api.guildwars2.com/v2/items?ids=${wert}`);
+
+            // Statusprüfung
             console.log("Status: ", antwort.status);
             console.log("Okay? ", antwort.ok);
 
@@ -39,61 +47,67 @@
                 return;
             }
 
-            const daten = await antwort.json()
+            // Antwort parsen
+            const daten = await antwort.json();
 
+            // Ausgabe rendern
             const box = document.getElementById("ausgabe");
-
             box.innerHTML = `
                 <p>Name: ${daten[0].name}</p>
                 <p>Rarity: ${daten[0].rarity}</p>
                 <p>Type: ${daten[0].type}</p>
-            `
+            `;
         }
         
         async function getaccount() {
-            try  {
-            const wert = document.getElementById("apiKey").value;
-            const box = document.getElementById("ausgabe");
-            box.innerHTML = '<p>Laden ...</p>';
-            
-            const antwort = await fetch(`https://api.guildwars2.com/v2/account?access_token=${wert}`)
-
-            const daten = await antwort.json();
-
-            const wert2 = await fetch(`https://api.guildwars2.com/v2/account/legendaryarmory?access_token=${wert}`)
-
-            const armory = await wert2.json();
-            const ids = armory.map(i => i.id).join(',');
-
-            const wert3 = await fetch(`https://api.guildwars2.com/v2/items?ids=${ids}`)
-
-            const items = await wert3.json();
-
-            localStorage.setItem('gw2key', wert);
-
-            console.log(items);
-            console.log("Status: ", antwort.status);
-            console.log("Okay? ", antwort.ok);
-
-            const listeHTML = items.map(item => `
-            <p>${item.name}</p>
-            <img src="${item.icon}"> 
-            `).join('');
-
-            
-            const stunden = Math.floor(daten.age / 3600);
-
-           
-
-            box.innerHTML = `
+            try {
+                // API-Key auslesen
+                const wert = document.getElementById("apiKey").value;
+                const box = document.getElementById("ausgabe");
+                box.innerHTML = '<p>Laden ...</p>';
                 
-                <p>Accountname: ${daten.name}</p>
-                <p>Account Spielzeit: ${stunden}h</p>
-                <hr></hr>
-                <h3>Legendary Armory</h3>
-                ${listeHTML}
-            ` 
+                // Accountdaten abrufen
+                const antwort = await fetch(`https://api.guildwars2.com/v2/account?access_token=${wert}`);
+                const daten = await antwort.json();
+
+                // Legendary Armory abrufen
+                const wert2 = await fetch(`https://api.guildwars2.com/v2/account/legendaryarmory?access_token=${wert}`);
+                const armory = await wert2.json();
+
+                // Item-IDs extrahieren
+                const ids = armory.map(i => i.id).join(',');
+
+                // Itemdetails abrufen
+                const wert3 = await fetch(`https://api.guildwars2.com/v2/items?ids=${ids}`);
+                const items = await wert3.json();
+
+                // Key speichern
+                localStorage.setItem('gw2key', wert);
+
+                console.log(items);
+                console.log("Status: ", antwort.status);
+                console.log("Okay? ", antwort.ok);
+
+                // Item-Liste aufbauen
+                const listeHTML = items.map(item => `
+                    <p>${item.name}</p>
+                    <img src="${item.icon}"> 
+                `).join('');
+
+                // Spielzeit umrechnen
+                const stunden = Math.floor(daten.age / 3600);
+
+                // Ergebnis anzeigen
+                box.innerHTML = `
+                    <p>Accountname: ${daten.name}</p>
+                    <p>Account Spielzeit: ${stunden}h</p>
+                    <hr>
+                    <h3>Legendary Armory</h3>
+                    ${listeHTML}
+                `;
+
             } catch(fehler) {
+                // Fehlerbehandlung
                 console.log("Etwas ist Fehlgeschlagen:", fehler);
                 box.innerHTML = '<p>Fehler beim Laden</p>';
             }
